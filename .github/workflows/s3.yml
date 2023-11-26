@@ -46,8 +46,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: playwright-report
-        path: ../playwright-report/
-    - run: ls -R ..
+        path: playwright-report/
     - name: Setup Terraform with specified version on the runner
       uses: hashicorp/setup-terraform@v2
     - name: Terraform Init
