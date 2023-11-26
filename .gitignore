@@ -3,3 +3,13 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# ignore some files in aws directory (terraform stuff)
+*/.terraform/
+*/terraform.tfstate
+*/terraform.tfstate.backup
+*/terraform.tfvars
+*/terraform.tfvars.json
+*/.terraform.lock.hcl
+*/.terraform.lock.json
+*/.terraform.tfstate.lock.info
