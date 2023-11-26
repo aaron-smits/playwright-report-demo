@@ -47,11 +47,13 @@ jobs:
       with:
         name: playwright-report
         path: playwright-report/
-    - run: cd aws
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
+      uses: hashicorp/setup-terraform@v3
     - name: Provision the report site
       run: |
+        cd aws
+        ls -R
+        ls -R ../playwright-report
         terraform init
         terraform apply -auto-approve
 
