@@ -49,8 +49,9 @@ jobs:
         path: playwright-report/
     - name: Setup Terraform with specified version on the runner
       uses: hashicorp/setup-terraform@v2
-    - name: Terraform Init
-      run: cd aws && terraform init
-    - name: Terraform Apply
-      run: cd aws && terraform apply -auto-approve
+    - name: Provision the report site
+      run: |
+        cd aws
+        terraform init
+        terraform apply -auto-approve
 
