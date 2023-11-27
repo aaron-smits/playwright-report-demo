@@ -45,8 +45,6 @@ jobs:
     - name: Provision the report site
       run: |
         cd aws
-        ls -R
-        ls -R ../playwright-report
         terraform init
         terraform apply -auto-approve
 
