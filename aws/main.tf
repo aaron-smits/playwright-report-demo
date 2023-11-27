@@ -115,7 +115,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   restrictions {
     geo_restriction {
       restriction_type = var.cloudfront_geo_restriction_restriction_type
-      locations        = []
+      locations        = var.cloudfront_geo_restriction_locations
     }
   }
   viewer_certificate {
@@ -133,10 +133,14 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   wait_for_deployment = false
 }
 
+# Restrict access to the S3 bucket to only CloudFront
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "access-identity-${var.domain_name}.s3.amazonaws.com"
 }
 
+# Upload files to S3 bucket
+
+# Associate file extensions with content types
 locals {
   file_types = {
     "html"  = "text/html",
@@ -150,6 +154,7 @@ locals {
   }
 }
 
+# Upload files to S3 bucket and assign content types
 resource "aws_s3_object" "s3_bucket" {
   depends_on = [aws_s3_bucket.s3_bucket]
   for_each   = fileset("../playwright-report/", "**")
