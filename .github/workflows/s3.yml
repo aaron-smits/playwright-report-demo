@@ -1,5 +1,7 @@
 name: Playwright Tests to AWS
 on:
+  # Trigger the workflow on push or pull request
+  # or by manually running it from the Actions tab
   workflow_dispatch:
   push:
     branches: [ main, master ]
@@ -10,6 +12,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
+      # Use the Playwright image
       image: mcr.microsoft.com/playwright:v1.40.0-jammy
     steps:
     - uses: actions/checkout@v3
@@ -22,14 +25,13 @@ jobs:
       with:
         name: playwright-report
         path: playwright-report/
-        retention-days: 30
   # Provision and deploy the report site with Terraform
   deploy:
     needs: test
     runs-on: ubuntu-latest
     environment:
       name: report
-      url: ${{ steps.provision.outputs.deployment_url }}
+      url: ${{ steps.deploy.outputs.deployment_url }}
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -42,15 +44,17 @@ jobs:
         path: playwright-report/
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
-    - name: Provision the report site
-      id: provision
+    - name: Initialize Terraform
       working-directory: ./aws
+      run: terraform init
+    - name: Deploy the report site
+      working-directory: ./aws
+      id: deploy
       run: |
-        terraform init
         terraform apply -auto-approve
         echo "deployment_url=https://$(terraform output -raw cloudfront_domain_name)" >> $GITHUB_OUTPUT
         echo "distribution_id=$(terraform output -raw cloudfront_dist_id)" >> $GITHUB_OUTPUT
     - name: Invalidate CloudFront cache
       if: always()
       run: |
-        aws cloudfront create-invalidation --distribution-id ${{ steps.provision.outputs.distribution_id }} --paths "/*"
+        aws cloudfront create-invalidation --distribution-id ${{ steps.deploy.outputs.distribution_id }} --paths "/*"
