@@ -47,4 +47,9 @@ jobs:
         cd aws
         terraform init
         terraform apply -auto-approve
+    # Add the URL to the deployment as an output
+    - name: Set deployment URL output
+      id: deployment
+      run: |
+        echo "::set-output name=deployment_url::$(terraform output -raw cloudfront_domain_name)"
 
