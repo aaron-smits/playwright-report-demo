@@ -183,9 +183,7 @@ resource "aws_s3_object" "data" {
   }, substr(each.value, -4, 4), "binary/octet-stream")
 }
 
-# Invalidate the CloudFront cache with a local-exec command
-# resource "null_resource" "invalidate_cloudfront_cache" {
-#   provisioner "local-exec" {
-#     command = "aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.s3_distribution.id} --paths '/*'"
-#   }
-# }
+output "cloudfront_status" {
+  description = "The status of the CloudFront distribution"
+  value       = aws_cloudfront_distribution.s3_distribution.status
+}
