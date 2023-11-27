@@ -83,11 +83,13 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     allowed_methods = [
       "GET",
       "HEAD",
+      "OPTIONS"
     ]
 
     cached_methods = [
       "GET",
       "HEAD",
+      "OPTIONS"
     ]
 
     target_origin_id = "s3-cloudfront"
