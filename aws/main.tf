@@ -135,55 +135,25 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "access-identity-${var.domain_name}.s3.amazonaws.com"
 }
 
-resource "aws_s3_object" "index" {
-  depends_on   = [aws_s3_bucket.s3_bucket]
-  bucket       = var.bucket_name
-  key          = "index.html"
-  source       = "../playwright-report/index.html"
-  etag         = filemd5("../playwright-report/index.html")
-  content_type = "text/html"
+locals {
+  file_types = {
+    "html"  = "text/html",
+    "js"    = "application/javascript",
+    "css"   = "text/css",
+    "ttf"   = "font/ttf",
+    "svg"   = "image/svg+xml",
+    "zip"   = "application/zip"
+    "webm"  = "video/webm"
+    "png"   = "image/png"
+  }
 }
 
-resource "aws_s3_object" "trace" {
+resource "aws_s3_object" "s3_bucket" {
   depends_on = [aws_s3_bucket.s3_bucket]
-  for_each   = fileset("../playwright-report", "trace/**")
+  for_each   = fileset("../playwright-report/", "**")
   bucket     = var.bucket_name
   key        = each.value
   source     = "../playwright-report/${each.value}"
   etag       = filemd5("../playwright-report/${each.value}")
-  # Handle content types: *.webm, *.png, *.zip, *.css, *.js, *.html, *.svg, *.ttf
-  content_type = lookup({
-    ".webm" = "video/webm"
-    ".png"  = "image/png"
-    ".zip"  = "application/zip"
-    ".css"  = "text/css"
-    ".js"   = "application/javascript"
-    ".html" = "text/html"
-    ".svg"  = "image/svg+xml"
-    ".ttf"  = "font/ttf"
-  }, substr(each.value, -4, 4), "binary/octet-stream")
-}
-
-resource "aws_s3_object" "data" {
-  depends_on = [aws_s3_bucket.s3_bucket]
-  for_each   = fileset("../playwright-report", "data/**")
-  bucket     = var.bucket_name
-  key        = each.value
-  source     = "../playwright-report/${each.value}"
-  etag       = filemd5("../playwright-report/${each.value}")
-  content_type = lookup({
-    ".webm" = "video/webm"
-    ".png"  = "image/png"
-    ".zip"  = "application/zip"
-    ".css"  = "text/css"
-    ".js"   = "application/javascript"
-    ".html" = "text/html"
-    ".svg"  = "image/svg+xml"
-    ".ttf"  = "font/ttf"
-  }, substr(each.value, -4, 4), "binary/octet-stream")
-}
-
-output "cloudfront_status" {
-  description = "The status of the CloudFront distribution"
-  value       = aws_cloudfront_distribution.s3_distribution.status
+  content_type = lookup(local.file_types, element(reverse(split(".", each.value)), 0), "binary/octet-stream")
 }
