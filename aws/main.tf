@@ -164,12 +164,3 @@ resource "aws_s3_object" "s3_bucket" {
   etag       = filemd5("../playwright-report/${each.value}")
   content_type = lookup(local.file_types, element(reverse(split(".", each.value)), 0), "binary/octet-stream")
 }
-
-# Invalidate CloudFront cache
-resource "null_resource" "invalidate_cloudfront_cache" {
-  depends_on = [aws_s3_bucket.s3_bucket]
-  provisioner "local-exec" {
-    command = "aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.s3_distribution.id} --paths '/*'"
-  }
-  
-}
