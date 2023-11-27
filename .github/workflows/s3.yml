@@ -26,16 +26,8 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-  # Configure Pages
-    - name: Configure GitHub Pages
-      uses: actions/configure-pages@v3
-  # Upload the report as a pages artifact
-    - name: Upload Pages Artifact
-      uses: actions/upload-pages-artifact@v2
-      with:
-        path: playwright-report/
-  # Provision the report site with Terraform
-  provision:
+  # Provision and deploy the report site with Terraform
+  deploy:
     needs: test
     runs-on: ubuntu-latest
     env:
