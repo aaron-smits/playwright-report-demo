@@ -54,6 +54,7 @@ jobs:
         terraform apply -auto-approve
         echo "deployment_url=https://$(terraform output -raw cloudfront_domain_name)" >> $GITHUB_OUTPUT
         echo "distribution_id=$(terraform output -raw cloudfront_dist_id)" >> $GITHUB_OUTPUT
+    # Invalidate the CloudFront cache to make sure the latest report is served
     - name: Invalidate CloudFront cache
       if: always()
       run: |
