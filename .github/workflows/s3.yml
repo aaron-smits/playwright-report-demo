@@ -49,3 +49,8 @@ jobs:
         terraform init
         terraform apply -auto-approve
         echo "deployment_url=https://$(terraform output -raw cloudfront_domain_name)" >> $GITHUB_OUTPUT
+        echo "distribution_id=$(terraform output -raw cloudfront_dist_id)" >> $GITHUB_OUTPUT
+    - name: Invalidate CloudFront cache
+      if: always()
+      run: |
+        aws cloudfront create-invalidation --distribution-id ${{ steps.provision.outputs.distribution_id }} --paths "/*"
