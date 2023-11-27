@@ -1,8 +1,13 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
+  }
+  backend "s3" {
+    bucket = "terraform-bucket-123as2e122"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
   }
 }
 provider "aws" {
@@ -31,6 +36,7 @@ data "aws_iam_policy_document" "s3_bucket_policy" {
     }
   }
 }
+
 resource "aws_s3_bucket" "s3_bucket" {
   bucket = var.bucket_name
 }
@@ -47,6 +53,7 @@ resource "aws_s3_bucket_website_configuration" "s3_bucket" {
     suffix = "index.html"
   }
 }
+
 resource "aws_s3_bucket_versioning" "s3_bucket" {
   bucket = aws_s3_bucket.s3_bucket.id
   versioning_configuration {
