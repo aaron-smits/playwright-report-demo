@@ -1,14 +1,20 @@
 # playwright-report-demo
 
-- Publish your Playwright report to GitHub Pages
+### GitHub Pages
 
 See `.gitub/workflows/pages.yml`
 
-- Publish your Playwright report to S3 bucket
+### S3 bucket and CloudFront via AWS
 
 See `.gitub/workflows/playwright-s3.yml` and the Terraform files in `aws/`
 
-Note: you need to create an S3 bucket for the Terraform backend first.
+Note: you need to create an S3 bucket for the Terraform backend first if you intend to use this on the CI.
+
+### Cloudflare Pages
+
+Follow the setup instructions [here](https://github.com/marketplace/actions/cloudflare-pages-github-action) to retrieve an API token from your Cloudflare [account](https://dash.cloudflare.com/profile/api-tokens)
+
+See `.gitub/workflows/cf-pages.yaml` for details
 
 - In Progress:
 
@@ -24,7 +30,6 @@ Vercel
 
 Netlify
 
-Cloudflare Pages
 
 Linode
 
