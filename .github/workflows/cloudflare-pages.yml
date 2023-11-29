@@ -31,7 +31,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: playwright-report
     - name: Publish to Cloudflare Pages
@@ -41,5 +41,5 @@ jobs:
       with:
         apiToken: $CLOUDFLARE_API_TOKEN
         accountId: 3477b46e693207ae7b7dfcb99da5ab45
-        projectName: playwright-report
+        projectName: playwright-report-demo
         directory: playwright-report
