@@ -34,6 +34,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: playwright-report
+        path: playwright-report/
     - name: Publish to Cloudflare Pages
       uses: cloudflare/pages-action@v1
       env:
